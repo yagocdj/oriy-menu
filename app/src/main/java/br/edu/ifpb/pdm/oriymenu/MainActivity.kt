@@ -72,7 +72,7 @@ fun MainApp() {
                 RegisterForm(
                     modifier = Modifier.padding(innerPadding),
                     onRegisterSuccessClick = {
-                        navController.navigate("home")
+                        navController.navigate("login")
                     })
             }
         }

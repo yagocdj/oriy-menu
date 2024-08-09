@@ -31,16 +31,12 @@ fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Card de prato
         CardPrato(
-            imageRes = R.drawable.espaguete, // Substitua pela imagem do prato
+            imageRes = R.drawable.espaguete,
             name = "Spaghetti Carbonara",
             description = "Delicioso espaguete com molho carbonara e pedaços crocantes de bacon."
         )
-
-        Spacer(modifier = Modifier.height(16.dp)) // Espaço entre o card e o botão
-
-        // Botão "Sair"
+        Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { onLogoffClick() }) {
             Text("Sair")
         }

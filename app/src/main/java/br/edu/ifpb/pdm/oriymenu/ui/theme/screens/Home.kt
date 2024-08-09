@@ -1,4 +1,4 @@
-package br.edu.ifpb.pdm.oriymenu.ui.theme.telas
+package br.edu.ifpb.pdm.oriymenu.ui.theme.screens
 
 
 import androidx.compose.foundation.layout.Column

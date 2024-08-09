@@ -1,7 +1,5 @@
 package br.edu.ifpb.pdm.oriymenu.ui.theme.telas
 
-import android.widget.Space
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import br.edu.ifpb.pdm.oriymenu.ui.theme.OriymenuTheme
 
 @Composable
-fun RegisterForm(modifier: Modifier = Modifier) {
+fun RegisterForm(modifier: Modifier = Modifier, onRegisterSuccessClick: () -> Unit) {
 
     var email by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
@@ -76,7 +73,10 @@ fun RegisterForm(modifier: Modifier = Modifier) {
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(6.dp))
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            // After successful registration logic
+            onRegisterSuccessClick()
+        }) {
             Text(text = "Cadastrar-se")
         }
     }
@@ -86,6 +86,6 @@ fun RegisterForm(modifier: Modifier = Modifier) {
 @Composable
 fun RegisterScreenPreview() {
     OriymenuTheme {
-        RegisterForm()
+        RegisterForm(onRegisterSuccessClick = {})
     }
 }

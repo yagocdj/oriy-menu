@@ -32,6 +32,8 @@ fun RegisterForm(modifier: Modifier = Modifier, onRegisterSuccessClick: () -> Un
     var enrollment by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val enrollmentDigitLimit = 7
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -58,11 +60,14 @@ fun RegisterForm(modifier: Modifier = Modifier, onRegisterSuccessClick: () -> Un
             placeholder = { Text(text = "example@mail.com") }
         )
         Spacer(modifier = Modifier.height(6.dp))
+        // TODO - use a mask in this field (visualTransformation)
         OutlinedTextField(
             value = enrollment,
-            onValueChange = { enrollment = it },
+            onValueChange = {
+                if (it.length <= enrollmentDigitLimit) enrollment = it
+            },
             label = { Text(text = "Matrícula") },
-            placeholder = { Text(text = "000000-0") },
+            placeholder = { Text(text = "0000000") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         Spacer(modifier = Modifier.height(6.dp))

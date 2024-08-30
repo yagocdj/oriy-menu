@@ -55,7 +55,8 @@ fun MainApp() {
         }, modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = "login") {
+        val startScreen = "home"  // DEBUG only
+        NavHost(navController = navController, startDestination = startScreen) {
             composable("login") {
                 LoginScreen(onSignInClick = {
                     navController.navigate("home")

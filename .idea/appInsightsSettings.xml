@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="br.edu.ifpb.pdm.oriymenu" />
+                  <option name="mobileSdkAppId" value="1:73441147515:android:8d177181f94b09dbf200de" />
+                  <option name="projectId" value="oryi-66dfb" />
+                  <option name="projectNumber" value="73441147515" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

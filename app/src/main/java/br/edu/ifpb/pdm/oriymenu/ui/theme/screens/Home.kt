@@ -62,14 +62,8 @@ fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
         // the data will be fetched from the database automatically
         Button(onClick = {
             scope.launch(Dispatchers.IO) {
-//                menuDAO.findByDate(date = Date(), callback = { returnedMenu ->
-//                    returnedMenu?.let { menu ->
-//                        dishes.clear()
-//                        dishes.addAll(menu.dishes)
-//                    }
-//                })
                 menuDAO.findAll { menus ->
-                    Log.d("HomeScreen", "Menus: $menus")
+                    
                 }
             }
         }) {

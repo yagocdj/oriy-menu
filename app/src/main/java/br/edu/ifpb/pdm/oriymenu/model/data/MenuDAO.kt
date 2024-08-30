@@ -72,36 +72,6 @@ class MenuDAO {
                 callback(emptyList())
             }
     }
-//    fun findAll(callback: (List<Menu>) -> Unit) {
-//        db.collection(dbEntityName).get()
-//            .addOnSuccessListener { document ->
-//                val menus = document.toObjects<Menu>()
-//                val menuList = mutableListOf<Menu>()
-//
-//                menus.forEach { menu ->
-//                    val dishRefs = menu.dishes as List<DocumentReference>  // Assuming dishes is a list of DocumentReferences
-//
-//                    val dishList = mutableListOf<Dish>()
-//                    dishRefs.forEach { dishRef ->
-//                        dishRef.get().addOnSuccessListener { dishDocument ->
-//                            val dish = dishDocument.toObject(Dish::class.java)
-//                            if (dish != null) {
-//                                dishList.add(dish)
-//                            }
-//                        }.addOnFailureListener {
-//                            // Handle any failure in fetching a dish document
-//                        }
-//                    }
-//
-//                    menu.dishes = dishList
-//                    menuList.add(menu)
-//                }
-//                callback(menuList)
-//            }
-//            .addOnFailureListener {
-//                callback(emptyList())
-//            }
-//    }
 
     /**
      * Search for a menu by its date

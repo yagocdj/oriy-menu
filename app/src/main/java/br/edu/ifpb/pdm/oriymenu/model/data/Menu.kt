@@ -9,6 +9,7 @@ import java.util.Date
 data class Menu(
     @DocumentId
     val id: String = "",
+    val idMenu: Int = 0,
     val date: Date? = null,
-    var dishes: List<Dish> = emptyList()
+    var dishes: List<Int> = emptyList()
 )

@@ -54,22 +54,6 @@ class MenuDAO {
         db.collection(dbEntityName).get()
             .addOnSuccessListener { menuDoc ->
                 val menus = menuDoc.toObjects<Menu>()
-                Log.d("MenuDAO", "Menus: $menus")
-                menus.forEach { menu ->
-                    db.collection("dishes").get()
-                        .addOnSuccessListener { dishDoc ->
-                            val dishes = dishDoc.toObjects<Dish>()
-                            Log.d("MenuDAO dishes", "$dishes")
-                            menu.dishes = dishes
-                        }
-                        .addOnFailureListener {
-                            menu.dishes = emptyList()
-                        }
-                }
-                callback(menus)
-            }
-            .addOnFailureListener {
-                callback(emptyList())
             }
     }
 

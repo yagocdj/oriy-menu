@@ -43,7 +43,7 @@ import java.util.Date
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
     val scope = rememberCoroutineScope()
-    val menuDAO = MenuDAO()
+    val dishDAO = DishDAO()
     val dishes = remember { mutableStateListOf<Dish>() }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,9 +62,11 @@ fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
         // the data will be fetched from the database automatically
         Button(onClick = {
             scope.launch(Dispatchers.IO) {
-                menuDAO.findAll { menus ->
-                    
-                }
+                dishDAO.findAll(callback = {dishes ->
+                    dishes.forEach{ dish ->
+                        Log.d("HomeScreen", "Dish: $dish")
+                    }
+                })
             }
         }) {
             Text("Mostrar cardápio")

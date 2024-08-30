@@ -7,6 +7,7 @@ import com.google.firebase.firestore.toObjects
 class DishDAO {
 
     private val db = Firebase.firestore
+    private val dbEntityName = "dish"
 
     /**
      * Save a dish in the database
@@ -15,7 +16,7 @@ class DishDAO {
      * boolean indicating if the dish was saved
      */
     fun save(dish: Dish, callback: (Boolean) -> Unit) {
-        db.collection("pratos").add(dish)
+        db.collection("dish").add(dish)
             .addOnSuccessListener {
                 callback(true)
             }
@@ -31,7 +32,7 @@ class DishDAO {
      * boolean indicating if the dish was updated
      */
     fun update(dish: Dish, callback: (Boolean) -> Unit) {
-        db.collection("pratos").document(dish.id).set(dish)
+        db.collection(dbEntityName).document(dish.id).set(dish)
             .addOnSuccessListener {
                 callback(true)
             }
@@ -45,7 +46,7 @@ class DishDAO {
      * @param callback function that will receive the list of dishes
      */
     fun findAll(callback: (List<Dish>) -> Unit) {
-        db.collection("pratos").get()
+        db.collection(dbEntityName).get()
             .addOnSuccessListener { document ->
                 val dishes = document.toObjects<Dish>()
                 callback(dishes)
@@ -55,32 +56,32 @@ class DishDAO {
             }
     }
 
-    /**
-     * Get all dishes from the database with their feedbacks
-     * @param callback function that will receive the list of dishes
-     */
-    fun findAllWithFeedbacks(callback: (List<Dish>) -> Unit) {
-        db.collection("pratos").get()
-            .addOnSuccessListener { document ->
-                val dishes = document.toObjects<Dish>()
-                dishes.forEach { dish ->
-                    // Search for feedbacks of each dish
-                    db.collection("pratos").document(dish.id)
-                        .collection("feedbacks").get()
-                        .addOnSuccessListener { document ->
-                            val feedbacks = document.toObjects<Feedback>()
-                            dish.feedbacks = feedbacks
-                        }
-                        .addOnFailureListener {
-                            dish.feedbacks = emptyList()
-                        }
-                }
-                callback(dishes)
-            }
-            .addOnFailureListener {
-                callback(emptyList())
-            }
-    }
+//    /**
+//     * Get all dishes from the database with their feedbacks
+//     * @param callback function that will receive the list of dishes
+//     */
+//    fun findAllWithFeedbacks(callback: (List<Dish>) -> Unit) {
+//        db.collection("pratos").get()
+//            .addOnSuccessListener { document ->
+//                val dishes = document.toObjects<Dish>()
+//                dishes.forEach { dish ->
+//                    // Search for feedbacks of each dish
+//                    db.collection("pratos").document(dish.id)
+//                        .collection("feedbacks").get()
+//                        .addOnSuccessListener { document ->
+//                            val feedbacks = document.toObjects<Feedback>()
+//                            dish.feedbacks = feedbacks
+//                        }
+//                        .addOnFailureListener {
+//                            dish.feedbacks = emptyList()
+//                        }
+//                }
+//                callback(dishes)
+//            }
+//            .addOnFailureListener {
+//                callback(emptyList())
+//            }
+//    }
 
     /**
      * Search for a dish by its id
@@ -88,7 +89,7 @@ class DishDAO {
      * @param callback function that will receive the dish
      */
     fun searchById(id: String, callback: (Dish?) -> Unit) {
-        db.collection("pratos").document(id).get()
+        db.collection(dbEntityName).document(id).get()
             .addOnSuccessListener { document ->
                 val dish = document.toObject(Dish::class.java)
                 callback(dish)
@@ -105,7 +106,7 @@ class DishDAO {
      * boolean indicating if the dish was deleted
      */
     fun delete(dish: Dish, callback: (Boolean) -> Unit) {
-        db.collection("pratos").document(dish.id).delete()
+        db.collection(dbEntityName).document(dish.id).delete()
             .addOnSuccessListener {
                 callback(true)
             }

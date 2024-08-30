@@ -56,33 +56,6 @@ class DishDAO {
             }
     }
 
-//    /**
-//     * Get all dishes from the database with their feedbacks
-//     * @param callback function that will receive the list of dishes
-//     */
-//    fun findAllWithFeedbacks(callback: (List<Dish>) -> Unit) {
-//        db.collection("pratos").get()
-//            .addOnSuccessListener { document ->
-//                val dishes = document.toObjects<Dish>()
-//                dishes.forEach { dish ->
-//                    // Search for feedbacks of each dish
-//                    db.collection("pratos").document(dish.id)
-//                        .collection("feedbacks").get()
-//                        .addOnSuccessListener { document ->
-//                            val feedbacks = document.toObjects<Feedback>()
-//                            dish.feedbacks = feedbacks
-//                        }
-//                        .addOnFailureListener {
-//                            dish.feedbacks = emptyList()
-//                        }
-//                }
-//                callback(dishes)
-//            }
-//            .addOnFailureListener {
-//                callback(emptyList())
-//            }
-//    }
-
     /**
      * Search for a dish by its id
      * @param id the id of the dish

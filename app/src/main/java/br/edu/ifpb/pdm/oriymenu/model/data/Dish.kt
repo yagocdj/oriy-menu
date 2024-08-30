@@ -6,10 +6,10 @@ class Dish(
     @DocumentId
     val id: String = "",
     val name: String,
-    val mealType: MealType,
+    val meal: String,
     val description: String,
     val pathToImage: String,
     var feedbacks: List<Feedback>
 ) {
-    enum class MealType { VEGETARIAN, VEGAN, WITH_MEAT }
+    enum class Meal { BREAKFAST, LUNCH }
 }

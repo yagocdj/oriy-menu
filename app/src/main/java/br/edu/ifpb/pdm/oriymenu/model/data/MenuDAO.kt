@@ -1,12 +1,16 @@
 package br.edu.ifpb.pdm.oriymenu.model.data
 
+import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import java.util.Date
 
 class MenuDAO {
 
     private val db = Firebase.firestore
+    private val dbEntityName = "menu"
 
     /**
      * Save a menu in the database
@@ -14,7 +18,7 @@ class MenuDAO {
      * @param callback function that will receive the saved menu
      */
     fun save(menu: Menu, callback: (Menu?) -> Unit) {
-        db.collection("menus").add(menu)
+        db.collection(dbEntityName).add(menu)
             .addOnSuccessListener { documentReference ->
                 if (documentReference != null) {
                     callback(menu)
@@ -33,7 +37,7 @@ class MenuDAO {
      * @param callback function that will receive the updated menu
      */
     fun update(menu: Menu, callback: (Menu?) -> Unit) {
-        db.collection("menus").document(menu.id).set(menu)
+        db.collection(dbEntityName).document(menu.id).set(menu)
             .addOnSuccessListener {
                 callback(menu)
             }
@@ -43,33 +47,76 @@ class MenuDAO {
     }
 
     /**
-     * Get all menus from the database
+     * Get all menus and their dishes from the database
      * @param callback function that will receive the list of menus
      */
     fun findAll(callback: (List<Menu>) -> Unit) {
-        db.collection("menus").get()
-            .addOnSuccessListener { document ->
-                val menus = document.toObjects<Menu>()
+        db.collection(dbEntityName).get()
+            .addOnSuccessListener { menuDoc ->
+                val menus = menuDoc.toObjects<Menu>()
+                Log.d("MenuDAO", "Menus: $menus")
+                menus.forEach { menu ->
+                    db.collection("dishes").get()
+                        .addOnSuccessListener { dishDoc ->
+                            val dishes = dishDoc.toObjects<Dish>()
+                            Log.d("MenuDAO dishes", "$dishes")
+                            menu.dishes = dishes
+                        }
+                        .addOnFailureListener {
+                            menu.dishes = emptyList()
+                        }
+                }
                 callback(menus)
             }
             .addOnFailureListener {
                 callback(emptyList())
             }
     }
+//    fun findAll(callback: (List<Menu>) -> Unit) {
+//        db.collection(dbEntityName).get()
+//            .addOnSuccessListener { document ->
+//                val menus = document.toObjects<Menu>()
+//                val menuList = mutableListOf<Menu>()
+//
+//                menus.forEach { menu ->
+//                    val dishRefs = menu.dishes as List<DocumentReference>  // Assuming dishes is a list of DocumentReferences
+//
+//                    val dishList = mutableListOf<Dish>()
+//                    dishRefs.forEach { dishRef ->
+//                        dishRef.get().addOnSuccessListener { dishDocument ->
+//                            val dish = dishDocument.toObject(Dish::class.java)
+//                            if (dish != null) {
+//                                dishList.add(dish)
+//                            }
+//                        }.addOnFailureListener {
+//                            // Handle any failure in fetching a dish document
+//                        }
+//                    }
+//
+//                    menu.dishes = dishList
+//                    menuList.add(menu)
+//                }
+//                callback(menuList)
+//            }
+//            .addOnFailureListener {
+//                callback(emptyList())
+//            }
+//    }
 
     /**
      * Search for a menu by its date
      * @param date the date of the menu
      * @param callback function that will receive the menu
      */
-    fun findByDate(date: String, callback: (List<Menu>) -> Unit) {
-        db.collection("menus").whereEqualTo("data", date).get()
+    fun findByDate(date: Date, callback: (Menu?) -> Unit) {
+        db.collection(dbEntityName).whereEqualTo("data", date).get()
             .addOnSuccessListener { document ->
-                val menus = document.toObjects<Menu>()
-                callback(menus)
+                val menu = document.toObjects<Menu>().firstOrNull()
+                Log.d("MenuDAO", "Menu: ${menu?.date}")
+                callback(menu)  // it can be null
             }
             .addOnFailureListener {
-                callback(emptyList())
+                callback(null)
             }
     }
 
@@ -79,7 +126,7 @@ class MenuDAO {
      * @param callback function that will receive the menu
      */
     fun findById(id: String, callback: (Menu?) -> Unit) {
-        db.collection("menus").document(id).get()
+        db.collection(dbEntityName).document(id).get()
             .addOnSuccessListener { document ->
                 val menu = document.toObject(Menu::class.java)
                 callback(menu)
@@ -95,7 +142,7 @@ class MenuDAO {
      * @param callback function that will receive the deleted menu
      */
     fun delete(menu: Menu, callback: (Menu?) -> Unit) {
-        db.collection("menus").document(menu.id).delete()
+        db.collection(dbEntityName).document(menu.id).delete()
             .addOnSuccessListener {
                 callback(menu)
             }

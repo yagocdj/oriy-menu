@@ -1,15 +1,14 @@
 package br.edu.ifpb.pdm.oriymenu.model.data
 
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.PropertyName
+import com.google.firebase.firestore.ServerTimestamp
 import java.time.LocalDate
+import java.util.Date
 
-class Menu(
+data class Menu(
     @DocumentId
     val id: String = "",
-    val meal: Meal,
-    val date: LocalDate,
-    val dishes: List<Dish>) {
-
-    enum class Meal { BREAKFAST, LUNCH }
-}
-
+    val date: Date? = null,
+    var dishes: List<Dish> = emptyList()
+)

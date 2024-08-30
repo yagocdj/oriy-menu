@@ -22,4 +22,24 @@ class AdminDAO {
                 callback(null)
             }
     }
+
+    /**
+     * Find an admin by its email
+     * @param email the email of the admin
+     * @param callback function that will receive the admin
+     */
+    fun findByEmail(email: String, callback: (Admin?) -> Unit) {
+        db.collection("administrador").whereEqualTo("email", email).get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    callback(null)
+                } else {
+                    val admin = documents.documents[0].toObject(Admin::class.java)
+                    callback(admin)
+                }
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
 }

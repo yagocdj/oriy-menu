@@ -35,6 +35,7 @@ import br.edu.ifpb.pdm.oriymenu.model.data.Dish
 import br.edu.ifpb.pdm.oriymenu.model.data.DishDAO
 import br.edu.ifpb.pdm.oriymenu.model.data.Menu
 import br.edu.ifpb.pdm.oriymenu.model.data.MenuDAO
+import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -62,10 +63,9 @@ fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
         // the data will be fetched from the database automatically
         Button(onClick = {
             scope.launch(Dispatchers.IO) {
-                dishDAO.findAll(callback = {dishes ->
-                    dishes.forEach{ dish ->
-                        Log.d("HomeScreen", "Dish: $dish")
-                    }
+                dishDAO.findAll(callback = { returnedDishes ->
+                    dishes.clear()
+                    dishes.addAll(returnedDishes)
                 })
             }
         }) {
@@ -103,9 +103,9 @@ fun DishCard(
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = imageRes),
-                        contentDescription = name,
+                    AsyncImage(
+                        model = dish.pathToImage,
+                        contentDescription = dish.name,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(150.dp),

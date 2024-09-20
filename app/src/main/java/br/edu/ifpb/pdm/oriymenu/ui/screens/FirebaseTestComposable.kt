@@ -1,4 +1,4 @@
-package br.edu.ifpb.pdm.oriymenu.ui.theme.screens
+package br.edu.ifpb.pdm.oriymenu.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
 import br.edu.ifpb.pdm.oriymenu.model.data.DishDAO
 import br.edu.ifpb.pdm.oriymenu.model.data.MenuDAO
-import br.edu.ifpb.pdm.oriymenu.ui.theme.screens.ui.theme.OriymenuTheme
+import br.edu.ifpb.pdm.oriymenu.ui.theme.OriymenuTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -31,7 +31,7 @@ fun FirebaseTestComposable(modifier: Modifier = Modifier) {
 
         Button(onClick = {
             scope.launch(Dispatchers.IO) {
-                menuDAO.findByIdWithDishesRefs(menuId, callback = { menu ->
+                menuDAO.findById(menuId, callback = { menu ->
                     if (menu != null) {
                         for (dishRef in menu.dishes) {
 //                            dishRefs.add(dishRef)

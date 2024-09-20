@@ -20,9 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.edu.ifpb.pdm.oriymenu.ui.theme.OriymenuTheme
-import br.edu.ifpb.pdm.oriymenu.ui.theme.screens.HomeScreen
-import br.edu.ifpb.pdm.oriymenu.ui.theme.screens.LoginScreen
-import br.edu.ifpb.pdm.oriymenu.ui.theme.screens.RegisterForm
+import br.edu.ifpb.pdm.oriymenu.ui.screens.HomeScreen
+import br.edu.ifpb.pdm.oriymenu.ui.screens.LoginScreen
+import br.edu.ifpb.pdm.oriymenu.ui.screens.RegisterForm
 
 
 class MainActivity : ComponentActivity() {

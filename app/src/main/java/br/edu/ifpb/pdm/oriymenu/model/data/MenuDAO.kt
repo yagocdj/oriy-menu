@@ -53,6 +53,10 @@ class MenuDAO {
         menuRef.get()
             .addOnSuccessListener { menuDoc ->
                 val menus = menuDoc.toObjects<Menu>()
+                callback(menus)
+            }
+            .addOnFailureListener {
+                callback(emptyList())
             }
     }
 
@@ -62,7 +66,7 @@ class MenuDAO {
      * @param callback function that will receive the menu
      */
     fun findByDate(date: Date, callback: (Menu?) -> Unit) {
-        menuRef.whereEqualTo("data", date).get()
+        menuRef.whereEqualTo("date", date).get()
             .addOnSuccessListener { document ->
                 val menu = document.toObjects<Menu>().firstOrNull()
                 Log.d("MenuDAO", "Menu: ${menu?.date}")
@@ -79,23 +83,6 @@ class MenuDAO {
      * @param callback function that will receive the menu
      */
     fun findById(id: String, callback: (Menu?) -> Unit) {
-        menuRef.document(id).get()
-            .addOnSuccessListener { document ->
-                val menu = document.toObject(Menu::class.java)
-                callback(menu)
-            }
-            .addOnFailureListener {
-                callback(null)
-            }
-    }
-
-    /**
-     * Search for a menu by its id and include the dishes references
-     * @param id the id of the menu
-     * @param callback function that will receive the menu
-     * @see Menu
-     */
-    fun findByIdWithDishesRefs(id: String, callback: (Menu?) -> Unit) {
         menuRef.document(id).get()
             .addOnSuccessListener { document ->
                 val menu = document.toObject(Menu::class.java)

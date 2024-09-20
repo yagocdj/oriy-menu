@@ -1,8 +1,7 @@
-package br.edu.ifpb.pdm.oriymenu.ui.theme.screens
+package br.edu.ifpb.pdm.oriymenu.ui.screens
 
 
-import android.util.Log
-import androidx.compose.foundation.Image
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,37 +26,34 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.edu.ifpb.pdm.oriymenu.R
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
 import br.edu.ifpb.pdm.oriymenu.model.data.DishDAO
 import br.edu.ifpb.pdm.oriymenu.model.data.Menu
 import br.edu.ifpb.pdm.oriymenu.model.data.MenuDAO
+import br.edu.ifpb.pdm.oriymenu.ui.viewmodels.MenuViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.util.Date
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
+
     val scope = rememberCoroutineScope()
     val dishDAO = DishDAO()
+    val menuDAO = MenuDAO()
     val dishes = remember { mutableStateListOf<Dish>() }
+
+    // TODO: use the view model to fetch the dishes
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        DishCard(
-            imageRes = R.drawable.espaguete,
-            name = "Spaghetti Carbonara",
-            description = "Delicioso espaguete com molho carbonara e pedaços crocantes de bacon.",
-            dishes = dishes
-        )
+        DishCard(dishes = dishes)
         Spacer(modifier = Modifier.height(16.dp))
         // FIXME: this button will be removed in the future as it is only for testing purposes
         // the data will be fetched from the database automatically
@@ -76,9 +72,6 @@ fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
 
 @Composable
 fun DishCard(
-    imageRes: Int,
-    name: String,
-    description: String,
     dishes: List<Dish>
 ) {
     val scope = rememberCoroutineScope()

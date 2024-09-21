@@ -92,4 +92,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 }

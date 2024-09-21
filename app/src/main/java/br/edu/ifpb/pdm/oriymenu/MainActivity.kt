@@ -57,24 +57,8 @@ fun MainApp() {
         val navController = rememberNavController()
         val startScreen = "home"  // DEBUG only
         NavHost(navController = navController, startDestination = startScreen) {
-            composable("login") {
-                LoginScreen(onSignInClick = {
-                    navController.navigate("home")
-                }, onRegisterClick = {
-                    navController.navigate("register")
-                })
-            }
             composable("home") {
-                HomeScreen(modifier = Modifier.padding(innerPadding), onLogoffClick = {
-                    navController.navigate("login")
-                })
-            }
-            composable("register") {
-                RegisterForm(
-                    modifier = Modifier.padding(innerPadding),
-                    onRegisterSuccessClick = {
-                        navController.navigate("login")
-                    })
+                HomeScreen(modifier = Modifier.padding(innerPadding))
             }
         }
     }

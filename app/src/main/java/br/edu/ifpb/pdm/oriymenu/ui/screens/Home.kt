@@ -1,7 +1,6 @@
 package br.edu.ifpb.pdm.oriymenu.ui.screens
 
 
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,35 +16,32 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
-import br.edu.ifpb.pdm.oriymenu.model.data.DishDAO
-import br.edu.ifpb.pdm.oriymenu.model.data.Menu
-import br.edu.ifpb.pdm.oriymenu.model.data.MenuDAO
 import br.edu.ifpb.pdm.oriymenu.ui.viewmodels.MenuViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    menuViewModel: MenuViewModel = viewModel()
+) {
 
     val scope = rememberCoroutineScope()
-    val dishDAO = DishDAO()
-    val menuDAO = MenuDAO()
-    val dishes = remember { mutableStateListOf<Dish>() }
-
-    // TODO: use the view model to fetch the dishes
+//    val dishDAO = DishDAO()
+//    val menuDAO = MenuDAO()
+//    val dishes = remember { mutableStateListOf<Dish>() }
+    val dishes by menuViewModel.dishes.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,15 +54,8 @@ fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
         // FIXME: this button will be removed in the future as it is only for testing purposes
         // the data will be fetched from the database automatically
         Button(onClick = {
-            scope.launch(Dispatchers.IO) {
-                dishDAO.findAll(callback = { returnedDishes ->
-                    dishes.clear()
-                    dishes.addAll(returnedDishes)
-                })
-            }
-        }) {
-            Text("Mostrar cardápio")
-        }
+           scope.launch(Dispatchers.IO) { menuViewModel.fetchDishes() }
+        }) { Text("Mostrar cardápio") }
     }
 }
 
@@ -74,9 +63,6 @@ fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
 fun DishCard(
     dishes: List<Dish>
 ) {
-    val scope = rememberCoroutineScope()
-    val menuDAO = MenuDAO()
-    var menu by remember { mutableStateOf(Menu()) }
 
     LazyColumn {
         items(dishes) { dish ->

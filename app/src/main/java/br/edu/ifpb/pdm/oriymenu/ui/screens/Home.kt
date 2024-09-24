@@ -13,8 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,6 +37,7 @@ import br.edu.ifpb.pdm.oriymenu.ui.viewmodels.MenuViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 
 @Composable
 fun HomeScreen(
@@ -39,9 +46,6 @@ fun HomeScreen(
 ) {
 
     val scope = rememberCoroutineScope()
-//    val dishDAO = DishDAO()
-//    val menuDAO = MenuDAO()
-//    val dishes = remember { mutableStateListOf<Dish>() }
     val dishes by menuViewModel.dishes.collectAsState()
 
     Column(
@@ -52,13 +56,10 @@ fun HomeScreen(
     ) {
         DishCard(dishes = dishes)
         Spacer(modifier = Modifier.height(16.dp))
-        // FIXME: this button will be removed in the future as it is only for testing purposes
-        // the data will be fetched from the database automatically
-//        Button(onClick = {
-//           scope.launch(Dispatchers.IO) { menuViewModel.fetchDishes() }
-//        }) { Text("Mostrar cardápio") }
+
         LaunchedEffect(scope) {
-            menuViewModel.fetchDishes()
+//            menuViewModel.fetchDishes()
+            menuViewModel.fetchMenuByDate(Date())
         }
     }
 }
@@ -105,5 +106,33 @@ fun DishCard(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModalInput(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
     }
 }

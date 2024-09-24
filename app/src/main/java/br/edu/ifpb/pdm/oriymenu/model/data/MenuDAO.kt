@@ -2,8 +2,11 @@ package br.edu.ifpb.pdm.oriymenu.model.data
 
 import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import com.google.type.DateTime
+import java.util.Calendar
 import java.util.Date
 
 class MenuDAO {
@@ -66,7 +69,29 @@ class MenuDAO {
      * @param callback function that will receive the menu
      */
     fun findByDate(date: Date, callback: (Menu?) -> Unit) {
-        menuRef.whereEqualTo("date", date).get()
+
+        val calendarStart = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val calendarEnd = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }
+
+        val startTimestamp = Timestamp(calendarStart.time)
+        val endTimestamp = Timestamp(calendarEnd.time)
+
+        menuRef.whereGreaterThanOrEqualTo("date", startTimestamp)
+            .whereLessThanOrEqualTo("date", endTimestamp)
+            .get()
             .addOnSuccessListener { document ->
                 val menu = document.toObjects<Menu>().firstOrNull()
                 Log.d("MenuDAO", "Menu: ${menu?.date}")

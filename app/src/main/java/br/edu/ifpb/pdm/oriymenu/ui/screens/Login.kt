@@ -1,4 +1,4 @@
-package br.edu.ifpb.pdm.oriymenu.ui.theme.screens
+package br.edu.ifpb.pdm.oriymenu.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions

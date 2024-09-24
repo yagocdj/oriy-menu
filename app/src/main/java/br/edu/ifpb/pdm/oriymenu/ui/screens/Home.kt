@@ -1,8 +1,6 @@
-package br.edu.ifpb.pdm.oriymenu.ui.theme.screens
+package br.edu.ifpb.pdm.oriymenu.ui.screens
 
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,72 +16,57 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.edu.ifpb.pdm.oriymenu.R
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
-import br.edu.ifpb.pdm.oriymenu.model.data.DishDAO
-import br.edu.ifpb.pdm.oriymenu.model.data.Menu
-import br.edu.ifpb.pdm.oriymenu.model.data.MenuDAO
+import br.edu.ifpb.pdm.oriymenu.ui.viewmodels.MenuViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.util.Date
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, onLogoffClick: () -> Unit) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    menuViewModel: MenuViewModel = viewModel()
+) {
+
     val scope = rememberCoroutineScope()
-    val dishDAO = DishDAO()
-    val dishes = remember { mutableStateListOf<Dish>() }
+//    val dishDAO = DishDAO()
+//    val menuDAO = MenuDAO()
+//    val dishes = remember { mutableStateListOf<Dish>() }
+    val dishes by menuViewModel.dishes.collectAsState()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        DishCard(
-            imageRes = R.drawable.espaguete,
-            name = "Spaghetti Carbonara",
-            description = "Delicioso espaguete com molho carbonara e pedaços crocantes de bacon.",
-            dishes = dishes
-        )
+        DishCard(dishes = dishes)
         Spacer(modifier = Modifier.height(16.dp))
         // FIXME: this button will be removed in the future as it is only for testing purposes
         // the data will be fetched from the database automatically
-        Button(onClick = {
-            scope.launch(Dispatchers.IO) {
-                dishDAO.findAll(callback = { returnedDishes ->
-                    dishes.clear()
-                    dishes.addAll(returnedDishes)
-                })
-            }
-        }) {
-            Text("Mostrar cardápio")
+//        Button(onClick = {
+//           scope.launch(Dispatchers.IO) { menuViewModel.fetchDishes() }
+//        }) { Text("Mostrar cardápio") }
+        LaunchedEffect(scope) {
+            menuViewModel.fetchDishes()
         }
     }
 }
 
 @Composable
 fun DishCard(
-    imageRes: Int,
-    name: String,
-    description: String,
     dishes: List<Dish>
 ) {
-    val scope = rememberCoroutineScope()
-    val menuDAO = MenuDAO()
-    var menu by remember { mutableStateOf(Menu()) }
 
     LazyColumn {
         items(dishes) { dish ->

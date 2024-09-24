@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,9 +54,12 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
         // FIXME: this button will be removed in the future as it is only for testing purposes
         // the data will be fetched from the database automatically
-        Button(onClick = {
-           scope.launch(Dispatchers.IO) { menuViewModel.fetchDishes() }
-        }) { Text("Mostrar cardápio") }
+//        Button(onClick = {
+//           scope.launch(Dispatchers.IO) { menuViewModel.fetchDishes() }
+//        }) { Text("Mostrar cardápio") }
+        LaunchedEffect(scope) {
+            menuViewModel.fetchDishes()
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
 import com.google.type.DateTime
+import java.time.DayOfWeek
 import java.util.Calendar
 import java.util.Date
 

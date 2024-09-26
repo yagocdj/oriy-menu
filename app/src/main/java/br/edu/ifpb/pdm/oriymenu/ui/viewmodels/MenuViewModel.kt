@@ -1,49 +1,42 @@
 package br.edu.ifpb.pdm.oriymenu.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import br.edu.ifpb.pdm.oriymenu.model.data.WeekDayDAO
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
 import br.edu.ifpb.pdm.oriymenu.model.data.DishDAO
-import br.edu.ifpb.pdm.oriymenu.model.data.MenuDAO
-import com.google.type.DateTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 class MenuViewModel(
     private val ioDispatcher : CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
-    private val menuDAO = MenuDAO()
     private val dishDAO = DishDAO()
+    private val weekDayDAO = WeekDayDAO()
 
+    // State for dishes
     private val _dishes = MutableStateFlow<List<Dish>>(emptyList())
     val dishes: StateFlow<List<Dish>> = _dishes.asStateFlow()
 
-    suspend fun fetchDishes() {
-        withContext(ioDispatcher) {
-            dishDAO.findAll { returnedDishes ->
-                _dishes.value = returnedDishes
-            }
-        }
-    }
+    // State for dropdown
+    private val _isDropDownExpanded = MutableStateFlow<Boolean>(false)
+    val isDropDownExpanded = _isDropDownExpanded.asStateFlow()
+    private val _selectedElementIndex = MutableStateFlow<Int>(0)
+    val selectedElementIndex = _selectedElementIndex.asStateFlow()
 
-    suspend fun fetchMenuByDate(date: Date) {
+    suspend fun fetchByDayOfWeek(name: String) {
         withContext(ioDispatcher) {
-            menuDAO.findByDate(date) { returnedMenu ->
-                if (returnedMenu != null) {
+            weekDayDAO.findByDayOfWeek(name) { returnedDayOfWeek ->
+                if (returnedDayOfWeek != null) {
 
                     val returnedDishes = mutableListOf<Dish>()
 
                     // iterate through the list of references to dishes
-                    for (dishRef in returnedMenu.dishes) {
+                    for (dishRef in returnedDayOfWeek.dishes) {
 
                         dishDAO.findById(dishRef) { dish ->
                             if (dish != null) {
@@ -55,5 +48,17 @@ class MenuViewModel(
                 }
             }
         }
+    }
+
+    fun collapseDropDown() {
+        _isDropDownExpanded.value = false
+    }
+
+    fun showDropDown() {
+        _isDropDownExpanded.value = true
+    }
+
+    fun changeSelectedElementIndex(index: Int) {
+        _selectedElementIndex.value = index
     }
 }

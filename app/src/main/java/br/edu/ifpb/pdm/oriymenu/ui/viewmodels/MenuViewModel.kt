@@ -45,18 +45,18 @@ class MenuViewModel(
 
                     val returnedDishes = mutableListOf<Dish>()
 
-                    // Use um contador para garantir que todos os pratos foram recuperados
+                    // Use a counter to ensure all dishes are fetched
                     val totalDishes = returnedDayOfWeek.dishes.size
                     var dishesFetched = 0
 
-                    // Itere pela lista de referências aos pratos
+                    // Iterate through the list of dish references
                     for (dishRef in returnedDayOfWeek.dishes) {
                         dishDAO.findById(dishRef) { dish ->
                             if (dish != null) {
                                 returnedDishes.add(dish)
                             }
 
-                            // Incrementa o contador e, se todos os pratos forem recuperados, atualiza o estado
+                            // Increment the counter and if all dishes are fetched, update the state
                             dishesFetched++
                             if (dishesFetched == totalDishes) {
                                 _dishes.value = returnedDishes

@@ -1,5 +1,6 @@
 package br.edu.ifpb.pdm.oriymenu.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import br.edu.ifpb.pdm.oriymenu.model.data.WeekDayDAO
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
@@ -28,6 +29,15 @@ class MenuViewModel(
     private val _selectedElementIndex = MutableStateFlow<Int>(0)
     val selectedElementIndex = _selectedElementIndex.asStateFlow()
 
+    /**
+     * Fetches the dishes for a given day of the week.
+     *
+     * This method retrieves the dishes associated with the specified day of the week
+     * from the database. It uses a coroutine to perform the database operations on
+     * the IO dispatcher. The fetched dishes are then updated in the `_dishes` state flow.
+     *
+     * @param name The name of the day of the week for which to fetch the dishes.
+     */
     suspend fun fetchByDayOfWeek(name: String) {
         withContext(ioDispatcher) {
             weekDayDAO.findByDayOfWeek(name) { returnedDayOfWeek ->
@@ -35,12 +45,20 @@ class MenuViewModel(
 
                     val returnedDishes = mutableListOf<Dish>()
 
-                    // iterate through the list of references to dishes
-                    for (dishRef in returnedDayOfWeek.dishes) {
+                    // Use um contador para garantir que todos os pratos foram recuperados
+                    val totalDishes = returnedDayOfWeek.dishes.size
+                    var dishesFetched = 0
 
+                    // Itere pela lista de referências aos pratos
+                    for (dishRef in returnedDayOfWeek.dishes) {
                         dishDAO.findById(dishRef) { dish ->
                             if (dish != null) {
                                 returnedDishes.add(dish)
+                            }
+
+                            // Incrementa o contador e, se todos os pratos forem recuperados, atualiza o estado
+                            dishesFetched++
+                            if (dishesFetched == totalDishes) {
                                 _dishes.value = returnedDishes
                             }
                         }
@@ -49,6 +67,7 @@ class MenuViewModel(
             }
         }
     }
+
 
     fun collapseDropDown() {
         _isDropDownExpanded.value = false

@@ -28,7 +28,7 @@ class WeekDayDAO {
     fun findByDayOfWeek(name: String, callback: (WeekDay?) -> Unit) {
         dayOfWeekRef.whereEqualTo("name", name).get()
             .addOnSuccessListener { weekDay ->
-                val day = weekDay.toObjects<WeekDay>().first()
+                val day = weekDay.toObjects<WeekDay>().firstOrNull()
                 callback(day)
             }
             .addOnFailureListener {

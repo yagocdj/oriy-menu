@@ -49,11 +49,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     menuViewModel: MenuViewModel = viewModel()
 ) {
-
     val scope = rememberCoroutineScope()
-
     val dishes by menuViewModel.dishes.collectAsState()
-    val currentDayIndex by menuViewModel.selectedElementIndex.collectAsState()
 
     val namesOfDaysOfWeek = listOf(
         WeekDayNames.MONDAY.dayName, WeekDayNames.TUESDAY.dayName, WeekDayNames.WEDNESDAY.dayName,

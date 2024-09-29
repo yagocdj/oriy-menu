@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import br.edu.ifpb.pdm.oriymenu.model.data.WeekDayDAO
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
 import br.edu.ifpb.pdm.oriymenu.model.data.DishDAO
+import br.edu.ifpb.pdm.oriymenu.model.data.MealNames
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,46 +44,8 @@ class MenuViewModel(
      *
      * @param name The name of the day of the week for which to fetch the dishes.
      */
-//    suspend fun fetchByDayOfWeek(name: String) {
-//        withContext(ioDispatcher) {
-//            weekDayDAO.findByDayOfWeek(name) { returnedDayOfWeek ->
-//                if (returnedDayOfWeek != null) {
-//
-//                    val returnedDishes = mutableListOf<Dish>()
-//
-//                    // Use a counter to ensure all dishes are fetched
-//                    val totalDishes = returnedDayOfWeek.dishes.size
-//                    var dishesFetched = 0
-//
-//                    // Iterate through the list of dish references
-//                    for (dishRef in returnedDayOfWeek.dishes) {
-//                        dishDAO.findById(dishRef) { dish ->
-//                            if (dish != null) {
-//                                returnedDishes.add(dish)
-//                            }
-//
-//                            // Increment the counter and if all dishes are fetched, update the state
-//                            dishesFetched++
-//                            if (dishesFetched == totalDishes) {
-//                                _dishes.value = returnedDishes
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-    /**
-     * Fetches the dishes for a given day of the week.
-     *
-     * This method retrieves the dishes associated with the specified day of the week
-     * from the database. It uses a coroutine to perform the database operations on
-     * the IO dispatcher. The fetched dishes are then updated in the `_dishes` state flow.
-     *
-     * @param name The name of the day of the week for which to fetch the dishes.
-     */
     suspend fun fetchByDayOfWeek(name: String) {
-        fetchDishes(name, null)
+        fetchDishes(name, MealNames.BREAKFAST.mealName)  // filter by breakfast by default
     }
 
     /**
@@ -147,6 +110,7 @@ class MenuViewModel(
 
     fun changeSelectedDayIndex(index: Int) {
         _selectedDayIndex.value = index
+        _selectedMealIndex.value = 0 // Reset meal type to default (e.g., breakfast)
     }
 
     fun changeSelectedMealIndex(index: Int) {

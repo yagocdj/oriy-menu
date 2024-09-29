@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.ifpb.pdm.oriymenu.R
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
+import br.edu.ifpb.pdm.oriymenu.model.data.MealNames
 import br.edu.ifpb.pdm.oriymenu.model.data.WeekDayNames
 import br.edu.ifpb.pdm.oriymenu.ui.viewmodels.MenuViewModel
 import coil.compose.AsyncImage
@@ -55,7 +56,8 @@ fun HomeScreen(
         WeekDayNames.MONDAY.dayName, WeekDayNames.TUESDAY.dayName, WeekDayNames.WEDNESDAY.dayName,
         WeekDayNames.THURSDAY.dayName, WeekDayNames.FRIDAY.dayName
     )
-    val mealTypes = listOf("Almoço", "Café")
+    // 0 -> breakfast, 1 -> lunch
+    val mealTypes = listOf(MealNames.BREAKFAST.mealName, MealNames.LUNCH.mealName)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,9 +70,7 @@ fun HomeScreen(
             Column {
                 Text(text = "Dia da semana")
                 SelectComponent(
-                    modifier = modifier,
                     elements = namesOfDaysOfWeek,
-                    label = "Dia da semana",
                     isDropDownExpanded = menuViewModel.isDayDropdownExpanded,
                     onShowDropDown = { menuViewModel.showDayDropdown() },
                     onCollapseDropDown = { menuViewModel.collapseDayDropdown() },
@@ -87,9 +87,7 @@ fun HomeScreen(
             Column {
                 Text(text = "Refeição")
                 SelectComponent(
-                    modifier = modifier,
                     elements = mealTypes,
-                    label = "Refeição",
                     isDropDownExpanded = menuViewModel.isMealDropDownExpanded,
                     onShowDropDown = { menuViewModel.showMealDropdown() },
                     onCollapseDropDown = { menuViewModel.collapseMealDropdown() },
@@ -111,7 +109,8 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         LaunchedEffect(scope) {
-            menuViewModel.fetchByDayOfWeek(namesOfDaysOfWeek[0])
+//            menuViewModel.fetchByDayOfWeek(namesOfDaysOfWeek[0])
+            menuViewModel.fetchByDayOfWeekAndMeal(namesOfDaysOfWeek[0], mealTypes[0])
         }
     }
 }
@@ -162,63 +161,9 @@ fun DishCard(
     }
 }
 
-//@Composable
-//fun SelectComponent(
-//    modifier: Modifier = Modifier,
-//    elements: List<String>,
-//    menuViewModel: MenuViewModel = viewModel(),
-//    onSelect: (Int) -> Unit,
-//) {
-//    val isDropDownExpanded by menuViewModel.isDropDownExpanded.collectAsState()
-//    val currentDayIndex by menuViewModel.selectedElementIndex.collectAsState()
-//
-//    Column(
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center
-//    ) {
-//        Box {
-//            Row(
-//                horizontalArrangement = Arrangement.Center,
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier
-//                    .clickable {
-//                        menuViewModel.showDropDown()
-//                    }
-//                    .padding(12.dp)
-//            ) {
-//                Text(text = elements[currentDayIndex])
-//                Image(
-//                    painter = painterResource(id = R.drawable.arrow_drop_down),
-//                    contentDescription = "Arrow Drop Down"
-//                )
-//            }
-//        }
-//        DropdownMenu(
-//            modifier = Modifier.padding(horizontal = 16.dp),
-//            expanded = isDropDownExpanded,
-//            onDismissRequest = {
-//                menuViewModel.collapseDropDown()
-//            }
-//        ) {
-//            elements.forEachIndexed { index, name ->
-//                DropdownMenuItem(text = {
-//                    Text(text = name)
-//                },
-//                    onClick = {
-//                        menuViewModel.collapseDropDown()
-//                        menuViewModel.changeSelectedElementIndex(index)
-//                        onSelect(index)
-//                    })
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun SelectComponent(
-    modifier: Modifier = Modifier,
     elements: List<String>,
-    label: String,
     isDropDownExpanded: StateFlow<Boolean>,
     onShowDropDown: () -> Unit,
     onCollapseDropDown: () -> Unit,

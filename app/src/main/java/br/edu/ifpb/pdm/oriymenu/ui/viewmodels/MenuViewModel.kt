@@ -1,6 +1,5 @@
 package br.edu.ifpb.pdm.oriymenu.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import br.edu.ifpb.pdm.oriymenu.model.data.WeekDayDAO
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
@@ -23,11 +22,17 @@ class MenuViewModel(
     private val _dishes = MutableStateFlow<List<Dish>>(emptyList())
     val dishes: StateFlow<List<Dish>> = _dishes.asStateFlow()
 
-    // State for dropdown
-    private val _isDropDownExpanded = MutableStateFlow<Boolean>(false)
-    val isDropDownExpanded = _isDropDownExpanded.asStateFlow()
-    private val _selectedElementIndex = MutableStateFlow<Int>(0)
-    val selectedElementIndex = _selectedElementIndex.asStateFlow()
+    // State for day dropdown
+    private val _isDayDropdownExpanded = MutableStateFlow<Boolean>(false)
+    val isDayDropdownExpanded = _isDayDropdownExpanded.asStateFlow()
+    private val _selectedDayIndex = MutableStateFlow<Int>(0)
+    val selectedDayIndex = _selectedDayIndex.asStateFlow()
+
+    // State for meal dropdown
+    private val _isMealDropDownExpanded = MutableStateFlow<Boolean>(false)
+    val isMealDropDownExpanded = _isMealDropDownExpanded.asStateFlow()
+    private val _selectedMealIndex = MutableStateFlow<Int>(0)
+    val selectedMealIndex = _selectedMealIndex.asStateFlow()
 
     /**
      * Fetches the dishes for a given day of the week.
@@ -38,9 +43,65 @@ class MenuViewModel(
      *
      * @param name The name of the day of the week for which to fetch the dishes.
      */
+//    suspend fun fetchByDayOfWeek(name: String) {
+//        withContext(ioDispatcher) {
+//            weekDayDAO.findByDayOfWeek(name) { returnedDayOfWeek ->
+//                if (returnedDayOfWeek != null) {
+//
+//                    val returnedDishes = mutableListOf<Dish>()
+//
+//                    // Use a counter to ensure all dishes are fetched
+//                    val totalDishes = returnedDayOfWeek.dishes.size
+//                    var dishesFetched = 0
+//
+//                    // Iterate through the list of dish references
+//                    for (dishRef in returnedDayOfWeek.dishes) {
+//                        dishDAO.findById(dishRef) { dish ->
+//                            if (dish != null) {
+//                                returnedDishes.add(dish)
+//                            }
+//
+//                            // Increment the counter and if all dishes are fetched, update the state
+//                            dishesFetched++
+//                            if (dishesFetched == totalDishes) {
+//                                _dishes.value = returnedDishes
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+    /**
+     * Fetches the dishes for a given day of the week.
+     *
+     * This method retrieves the dishes associated with the specified day of the week
+     * from the database. It uses a coroutine to perform the database operations on
+     * the IO dispatcher. The fetched dishes are then updated in the `_dishes` state flow.
+     *
+     * @param name The name of the day of the week for which to fetch the dishes.
+     */
     suspend fun fetchByDayOfWeek(name: String) {
+        fetchDishes(name, null)
+    }
+
+    /**
+     * Fetches the dishes for a given day of the week and meal type.
+     *
+     * This method retrieves the dishes associated with the specified day of the week
+     * and meal type from the database. It uses a coroutine to perform the database
+     * operations on the IO dispatcher. The fetched dishes are then updated in the `_dishes` state flow.
+     *
+     * @param dayName The name of the day of the week for which to fetch the dishes.
+     * @param mealType The type of meal for which to fetch the dishes.
+     */
+    suspend fun fetchByDayOfWeekAndMeal(dayName: String, mealType: String) {
+        fetchDishes(dayName, mealType)
+    }
+
+    private suspend fun fetchDishes(dayName: String, mealType: String?) {
         withContext(ioDispatcher) {
-            weekDayDAO.findByDayOfWeek(name) { returnedDayOfWeek ->
+            weekDayDAO.findByDayOfWeek(dayName) { returnedDayOfWeek ->
                 if (returnedDayOfWeek != null) {
 
                     val returnedDishes = mutableListOf<Dish>()
@@ -52,7 +113,7 @@ class MenuViewModel(
                     // Iterate through the list of dish references
                     for (dishRef in returnedDayOfWeek.dishes) {
                         dishDAO.findById(dishRef) { dish ->
-                            if (dish != null) {
+                            if (dish != null && (mealType == null || dish.meal == mealType)) {
                                 returnedDishes.add(dish)
                             }
 
@@ -68,16 +129,27 @@ class MenuViewModel(
         }
     }
 
-
-    fun collapseDropDown() {
-        _isDropDownExpanded.value = false
+    fun collapseDayDropdown() {
+        _isDayDropdownExpanded.value = false
     }
 
-    fun showDropDown() {
-        _isDropDownExpanded.value = true
+    fun showDayDropdown() {
+        _isDayDropdownExpanded.value = true
     }
 
-    fun changeSelectedElementIndex(index: Int) {
-        _selectedElementIndex.value = index
+    fun collapseMealDropdown() {
+        _isMealDropDownExpanded.value = false
+    }
+
+    fun showMealDropdown() {
+        _isMealDropDownExpanded.value = true
+    }
+
+    fun changeSelectedDayIndex(index: Int) {
+        _selectedDayIndex.value = index
+    }
+
+    fun changeSelectedMealIndex(index: Int) {
+        _selectedMealIndex.value = index
     }
 }

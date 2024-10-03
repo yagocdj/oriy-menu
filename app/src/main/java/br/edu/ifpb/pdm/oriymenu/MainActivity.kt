@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -92,7 +91,7 @@ fun MainApp() {
                         // Exibe a tela de feedback quando o prato é encontrado
                         FeedbackScreen(
                             dish = dish!!, // Usar o operador !! pois dish não pode ser nulo aqui
-                            onFeedbackSubmitted = { navController.popBackStack() },
+                            onFeedbackSubmitted = { },
                             onCancel = { navController.popBackStack() }
                         )
                     }

@@ -3,6 +3,7 @@ package br.edu.ifpb.pdm.oriymenu.ui.screens
 import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,59 +23,63 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import br.edu.ifpb.pdm.oriymenu.model.data.Dish
 
 @Composable
-fun FeedbackScreen(dish: Dish, onFeedbackSubmitted: (String) -> Unit, onCancel: () -> Unit) {
+fun FeedbackScreen(
+    dish: Dish,
+    onFeedbackSubmitted: (String, Bitmap?) -> Unit, // Aqui deve estar definido corretamente
+    onCancel: () -> Unit
+) {
     var feedbackText by remember { mutableStateOf("") }
-    var isError by remember { mutableStateOf(false) }
+    var capturedImage: Bitmap? by remember { mutableStateOf(null) }
 
-    // Obter a configuração da tela para calcular 20% da altura
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
+    // Lançador para abrir a câmera e capturar a imagem
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        capturedImage = bitmap // Atribui a imagem capturada
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = screenHeight * 0.2f)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        Text(
-            text = "Feedback para: ${dish.name}",
-            style = MaterialTheme.typography.titleMedium
-        )
+        Text(text = "Feedback para: ${dish.name}", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo de texto para o feedback
+        // Adicionando um Spacer para descer o TextField
+        Spacer(modifier = Modifier.height(0.15.dp * 400)) // 15% de uma altura de tela padrão de 400dp
+
         TextField(
             value = feedbackText,
-            onValueChange = {
-                feedbackText = it
-                isError = false
-            },
+            onValueChange = { feedbackText = it },
             label = { Text("Digite seu feedback") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
-            isError = isError
+            modifier = Modifier.fillMaxWidth()
         )
 
-        // Exibe uma mensagem de erro se o campo estiver vazio
-        if (isError) {
-            Text(
-                text = "O feedback não pode estar vazio.",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botão para abrir a câmera
+        Button(onClick = { launcher.launch(null) }) {
+            Text(text = "Tirar foto")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Exibir a imagem capturada, se houver
+        capturedImage?.let {
+            Image(
+                bitmap = it.asImageBitmap(),
+                contentDescription = "Imagem capturada",
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botões de cancelar e enviar
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -83,17 +88,12 @@ fun FeedbackScreen(dish: Dish, onFeedbackSubmitted: (String) -> Unit, onCancel: 
                 Text("Cancelar")
             }
             Button(onClick = {
-                if (feedbackText.isBlank()) {
-                    isError = true
-                    onFeedbackSubmitted(feedbackText)
-                }
+                // Envia o feedback junto com a imagem
+                onFeedbackSubmitted(feedbackText, capturedImage) // Esta linha deve funcionar agora
             }) {
                 Text("Enviar")
             }
         }
     }
 }
-
-
-
 

@@ -3,9 +3,11 @@ package br.edu.ifpb.pdm.oriymenu.model.data
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
 import com.google.type.DateTime
+import kotlinx.coroutines.tasks.await
 import java.time.DayOfWeek
 import java.util.Calendar
 import java.util.Date
@@ -133,4 +135,16 @@ class MenuDAO {
                 callback(null)
             }
     }
+
+    // Função suspensa para obter todos os menus do Firestore
+    suspend fun getAllMenus(): List<Menu> {
+        return try {
+            // Busca o Task de QuerySnapshot do Firestore
+            val snapshot: QuerySnapshot = menuRef.get().await() // Usa await corretamente
+            snapshot.toObjects(Menu::class.java) // Converte o resultado em uma lista de Menu
+        } catch (e: Exception) {
+            emptyList() // Retorna uma lista vazia em caso de erro
+        }
+    }
 }
+

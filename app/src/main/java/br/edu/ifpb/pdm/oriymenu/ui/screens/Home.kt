@@ -1,6 +1,5 @@
 package br.edu.ifpb.pdm.oriymenu.ui.screens
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.ifpb.pdm.oriymenu.R
-import br.edu.ifpb.pdm.oriymenu.model.data.Dish
+import br.edu.ifpb.pdm.oriymenu.database.entities.DishEntity
+import br.edu.ifpb.pdm.oriymenu.database.entities.MenuEntity
 import br.edu.ifpb.pdm.oriymenu.model.data.MealNames
 import br.edu.ifpb.pdm.oriymenu.model.data.WeekDayNames
 import br.edu.ifpb.pdm.oriymenu.ui.viewmodels.MenuViewModel
@@ -47,119 +47,65 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    menuViewModel: MenuViewModel = viewModel()
+    menus: List<MenuEntity>,
+    dishes: List<DishEntity>
 ) {
-    val scope = rememberCoroutineScope()
-    val dishes by menuViewModel.dishes.collectAsState()
-
-    val namesOfDaysOfWeek = listOf(
-        WeekDayNames.MONDAY.dayName, WeekDayNames.TUESDAY.dayName, WeekDayNames.WEDNESDAY.dayName,
-        WeekDayNames.THURSDAY.dayName, WeekDayNames.FRIDAY.dayName
-    )
-    // 0 -> breakfast, 1 -> lunch
-    val mealTypes = listOf(MealNames.BREAKFAST.mealName, MealNames.LUNCH.mealName)
-
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row {
-            // Select the day of the week
-            Column {
-                Text(text = "Dia da semana")
-                SelectComponent(
-                    elements = namesOfDaysOfWeek,
-                    isDropDownExpanded = menuViewModel.isDayDropdownExpanded,
-                    onShowDropDown = { menuViewModel.showDayDropdown() },
-                    onCollapseDropDown = { menuViewModel.collapseDayDropdown() },
-                    currentElementIndex = menuViewModel.selectedDayIndex,
-                    onSelect = { index ->
-                        menuViewModel.changeSelectedDayIndex(index)
-                        scope.launch(Dispatchers.IO) {
-                            menuViewModel.fetchByDayOfWeek(namesOfDaysOfWeek[index])
-                        }
-                })
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            // Select the meal
-            Column {
-                Text(text = "Refeição")
-                SelectComponent(
-                    elements = mealTypes,
-                    isDropDownExpanded = menuViewModel.isMealDropDownExpanded,
-                    onShowDropDown = { menuViewModel.showMealDropdown() },
-                    onCollapseDropDown = { menuViewModel.collapseMealDropdown() },
-                    currentElementIndex = menuViewModel.selectedMealIndex,
-                    onSelect = { index ->
-                        scope.launch(Dispatchers.IO) {
-                            // Fetch dishes by selected day and meal type
-                            menuViewModel.changeSelectedMealIndex(index)
-                            val selectedDay = namesOfDaysOfWeek[
-                                menuViewModel.selectedDayIndex.value]
-                            menuViewModel.fetchByDayOfWeekAndMeal(selectedDay, mealTypes[index])
-                        }
-                })
+        Text(text = "Menus")
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(menus) { menu ->
+                MenuCard(menu = menu)
             }
         }
+
         Spacer(modifier = Modifier.height(20.dp))
 
-        DishCard(dishes = dishes)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LaunchedEffect(scope) {
-//            menuViewModel.fetchByDayOfWeek(namesOfDaysOfWeek[0])
-            menuViewModel.fetchByDayOfWeekAndMeal(namesOfDaysOfWeek[0], mealTypes[0])
+        Text(text = "Dishes")
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(dishes) { dish ->
+                DishCard(dish = dish)
+            }
         }
     }
 }
 
 @Composable
-fun DishCard(
-    dishes: List<Dish>
-) {
-
-    LazyColumn {
-        items(dishes) { dish ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
-                )
-            )
-            {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    AsyncImage(
-                        model = dish.pathToImage,
-                        contentDescription = dish.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(150.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = dish.name, style = MaterialTheme.typography.titleMedium)
-                    Text(text = dish.meal, style = MaterialTheme.typography.bodyMedium)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = dish.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontSize = 14.sp
-                    )
-                }
-            }
+fun MenuCard(menu: MenuEntity) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "Menu ID: ${menu.id}")
+            Text(text = "Date: ${menu.date}")
         }
     }
 }
+
+@Composable
+fun DishCard(dish: DishEntity) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "Dish Name: ${dish.name}")
+            Text(text = "Meal: ${dish.meal}")
+            Text(text = "Description: ${dish.description}")
+        }
+    }
+}
+
 
 @Composable
 fun SelectComponent(

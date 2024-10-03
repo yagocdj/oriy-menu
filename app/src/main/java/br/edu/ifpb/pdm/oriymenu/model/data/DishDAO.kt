@@ -1,8 +1,11 @@
 package br.edu.ifpb.pdm.oriymenu.model.data
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import kotlinx.coroutines.tasks.await
+
 
 class DishDAO {
 
@@ -88,4 +91,16 @@ class DishDAO {
             }
     }
 
+    suspend fun getAllDishes(): List<Dish> {
+        return try {
+            // Usa await para obter os pratos da coleção "dish" do Firestore
+            val snapshot: QuerySnapshot =
+                db.collection(dbEntityName).get().await() // Aqui corrigimos a chamada
+            snapshot.toObjects(Dish::class.java) // Converte o resultado para objetos Dish
+        } catch (e: Exception) {
+            emptyList() // Retorna uma lista vazia em caso de erro
+        }
+    }
 }
+
+

@@ -66,6 +66,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.storage.ktx)
     // For AGP 7.4+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
     // For AGP 7.3

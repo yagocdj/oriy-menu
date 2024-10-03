@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -47,7 +48,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    menuViewModel: MenuViewModel = viewModel()
+    menuViewModel: MenuViewModel = viewModel(),
+    onNavigateToFeedback: (Dish) -> Unit // Parâmetro para navegação para a tela de feedback
 ) {
     val scope = rememberCoroutineScope()
     val dishes by menuViewModel.dishes.collectAsState()
@@ -80,7 +82,7 @@ fun HomeScreen(
                         scope.launch(Dispatchers.IO) {
                             menuViewModel.fetchByDayOfWeek(namesOfDaysOfWeek[index])
                         }
-                })
+                    })
             }
             Spacer(modifier = Modifier.width(16.dp))
             // Select the meal
@@ -100,12 +102,13 @@ fun HomeScreen(
                                 menuViewModel.selectedDayIndex.value]
                             menuViewModel.fetchByDayOfWeekAndMeal(selectedDay, mealTypes[index])
                         }
-                })
+                    })
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
 
-        DishCard(dishes = dishes)
+        // Passa a função onNavigateToFeedback para o DishCard
+        DishCard(dishes = dishes, onFeedbackClick = onNavigateToFeedback)
         Spacer(modifier = Modifier.height(16.dp))
 
         LaunchedEffect(scope) {
@@ -117,7 +120,8 @@ fun HomeScreen(
 
 @Composable
 fun DishCard(
-    dishes: List<Dish>
+    dishes: List<Dish>,
+    onFeedbackClick: (Dish) -> Unit // Parâmetro para o clique de feedback
 ) {
 
     LazyColumn {
@@ -155,11 +159,18 @@ fun DishCard(
                         style = MaterialTheme.typography.bodyMedium,
                         fontSize = 14.sp
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Botão de Feedback
+                    Button(onClick = { onFeedbackClick(dish) }) {
+                        Text("Dar Feedback")
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun SelectComponent(

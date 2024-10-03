@@ -1,7 +1,9 @@
 package br.edu.ifpb.pdm.oriymenu.model.data
 
+import android.net.Uri
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
 
 class FeedbackDAO() {
 
@@ -19,6 +21,21 @@ class FeedbackDAO() {
                     callback(feedback)
                 } else {
                     callback(null)
+                }
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
+
+    private val storage = FirebaseStorage.getInstance().reference
+    fun uploadImage(imageUri: Uri, dishName: String, callback: (String?) -> Unit) {
+        val imageRef = storage.child("feedback_images/${dishName}.jpg")
+
+        imageRef.putFile(imageUri)
+            .addOnSuccessListener { taskSnapshot ->
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    callback(uri.toString())
                 }
             }
             .addOnFailureListener {

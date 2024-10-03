@@ -31,6 +31,7 @@ import br.edu.ifpb.pdm.oriymenu.model.data.Dish
 import java.io.File
 import java.io.IOException
 import androidx.core.content.FileProvider
+import com.google.firebase.storage.FirebaseStorage
 
 @Composable
 fun FeedbackScreen(
@@ -92,6 +93,9 @@ fun FeedbackScreen(
             onResult = { success ->
                 if (success) {
                     // A imagem foi capturada com sucesso, você pode usar imageUri
+                    uploadImage(imageUri!!, dish.name) { imageUrl ->
+                        // Aqui você pode manipular o URL da imagem após o upload
+                    }
                 }
             }
         )
@@ -149,4 +153,19 @@ fun createImageUri(context: Context): Uri {
         "${context.packageName}.fileprovider", // Nome do provedor definido no AndroidManifest.xml
         photoFile // O arquivo criado
     )
+}
+
+fun uploadImage(imageUri: Uri, dishName: String, callback: (String?) -> Unit) {
+    val storage = FirebaseStorage.getInstance().reference
+    val imageRef = storage.child("feedback_images/${dishName}.jpg")
+
+    imageRef.putFile(imageUri)
+        .addOnSuccessListener {
+            imageRef.downloadUrl.addOnSuccessListener { uri ->
+                callback(uri.toString()) // URL da imagem no Firebase Storage
+            }
+        }
+        .addOnFailureListener {
+            callback(null) // Falha no upload
+        }
 }

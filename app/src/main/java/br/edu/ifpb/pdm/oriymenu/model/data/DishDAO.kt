@@ -1,5 +1,6 @@
 package br.edu.ifpb.pdm.oriymenu.model.data
 
+import androidx.compose.runtime.Composable
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects

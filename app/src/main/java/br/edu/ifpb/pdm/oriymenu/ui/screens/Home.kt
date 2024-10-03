@@ -1,12 +1,6 @@
 package br.edu.ifpb.pdm.oriymenu.ui.screens
 
-
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,14 +29,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    menuViewModel: MenuViewModel = viewModel()
+    menuViewModel: MenuViewModel = viewModel(),
+    onNavigateToFeedback: (Dish) -> Unit // Parâmetro para navegação para a tela de feedback
 ) {
-
     val scope = rememberCoroutineScope()
-//    val dishDAO = DishDAO()
-//    val menuDAO = MenuDAO()
-//    val dishes = remember { mutableStateListOf<Dish>() }
-    val dishes by menuViewModel.dishes.collectAsState()
+    //    val dishDAO = DishDAO()
+    //    val menuDAO = MenuDAO()
+    //    val dishes = remember { mutableStateListOf<Dish>() }
+    val dishes by menuViewModel.dishes.collectAsState() // Coletando os pratos do ViewModel
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,24 +44,25 @@ fun HomeScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        DishCard(dishes = dishes)
+        // Passa a função onNavigateToFeedback para o DishCard
+        DishCard(dishes = dishes, onFeedbackClick = onNavigateToFeedback) // Adicionado o parâmetro de clique
         Spacer(modifier = Modifier.height(16.dp))
         // FIXME: this button will be removed in the future as it is only for testing purposes
         // the data will be fetched from the database automatically
-//        Button(onClick = {
-//           scope.launch(Dispatchers.IO) { menuViewModel.fetchDishes() }
-//        }) { Text("Mostrar cardápio") }
+        //        Button(onClick = {
+        //           scope.launch(Dispatchers.IO) { menuViewModel.fetchDishes() }
+        //        }) { Text("Mostrar cardápio") }
         LaunchedEffect(scope) {
-            menuViewModel.fetchDishes()
+            menuViewModel.fetchDishes() // Carregar pratos ao iniciar
         }
     }
 }
 
 @Composable
 fun DishCard(
-    dishes: List<Dish>
+    dishes: List<Dish>,
+    onFeedbackClick: (Dish) -> Unit // Parâmetro para o clique de feedback
 ) {
-
     LazyColumn {
         items(dishes) { dish ->
             Card(
@@ -81,8 +76,7 @@ fun DishCard(
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 4.dp
                 )
-            )
-            {
+            ) {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
@@ -102,6 +96,12 @@ fun DishCard(
                         style = MaterialTheme.typography.bodyMedium,
                         fontSize = 14.sp
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Botão de Feedback
+                    Button(onClick = { onFeedbackClick(dish) }) { // Chama a função de navegação ao clicar
+                        Text("Dar Feedback")
+                    }
                 }
             }
         }

@@ -76,7 +76,7 @@ fun MainApp() {
                 val dishId = backStackEntry.arguments?.getString("dishId")
 
                 if (dishId != null) {
-                    var dish by remember { mutableStateOf<Dish?>(null) } // Use mutableStateOf para armazenar o prato
+                    var dish by remember { mutableStateOf<Dish?>(null) }
 
                     LaunchedEffect(dishId) {
                         dishDAO.findById(dishId) { fetchedDish ->
@@ -90,13 +90,18 @@ fun MainApp() {
                     } else {
                         // Exibe a tela de feedback quando o prato é encontrado
                         FeedbackScreen(
-                            dish = dish!!, // Usar o operador !! pois dish não pode ser nulo aqui
-                            onFeedbackSubmitted = { },
+                            dish = dish!!,
+                            onFeedbackSubmitted = { feedbackText, imageUri ->
+                                // Lógica para lidar com o feedback e a imagem capturada
+                                // Por exemplo, salvar no banco de dados ou enviar para um servidor
+                                println("Feedback: $feedbackText")
+                                println("Imagem URI: $imageUri")
+                                navController.popBackStack() // Voltar após o envio do feedback
+                            },
                             onCancel = { navController.popBackStack() }
                         )
                     }
                 } else {
-                    // Lidar com o caso onde dishId é nulo (opcional)
                     navController.popBackStack() // Voltar à tela anterior
                 }
             }

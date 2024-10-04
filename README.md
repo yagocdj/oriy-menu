@@ -14,6 +14,7 @@ Este é um aplicativo mobile que oferece aos usuários a possibilidade de explor
 - **Firebase**: Backend serverless para armazenamento de dados e fotos.
     - **Firebase Storage**: Armazenamento das imagens dos pratos.
     - **Firebase Realtime Database**: Gerenciamento dos pratos e feedbacks.
+    - **Firebase Storage**: Armazenamento das imagens dos feedbacks.
 - **Retrofit**: Integração com APIs para serviços externos.
 
 ## Repositório integrado

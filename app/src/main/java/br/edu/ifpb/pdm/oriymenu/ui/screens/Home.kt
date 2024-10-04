@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +28,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -121,8 +124,10 @@ fun HomeScreen(
 @Composable
 fun DishCard(
     dishes: List<Dish>,
-    onFeedbackClick: (Dish) -> Unit // Parâmetro para o clique de feedback
+    onFeedbackClick: (Dish) -> Unit
 ) {
+    // Estado para controlar o prato atualmente selecionado para exibição no AlertDialog
+    val (selectedDish, setSelectedDish) = remember { mutableStateOf<Dish?>(null) }
 
     LazyColumn {
         items(dishes) { dish ->
@@ -137,8 +142,7 @@ fun DishCard(
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 4.dp
                 )
-            )
-            {
+            ) {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
@@ -161,7 +165,14 @@ fun DishCard(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Botão de Feedback
+                    // Botão "Ver Detalhes" que abre o modal (AlertDialog)
+                    Button(onClick = { setSelectedDish(dish) }) {
+                        Text("Ver Detalhes")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Botão "Dar Feedback" que navega para a tela de feedback
                     Button(onClick = { onFeedbackClick(dish) }) {
                         Text("Dar Feedback")
                     }
@@ -169,7 +180,42 @@ fun DishCard(
             }
         }
     }
+
+    // Exibe o AlertDialog quando um prato é selecionado
+    selectedDish?.let { dish ->
+        AlertDialog(
+            onDismissRequest = { setSelectedDish(null) }, // Fecha o modal ao clicar fora
+            title = { Text("Detalhes do Prato") }, // Título do modal
+            text = { // Conteúdo do modal
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Exibe a imagem do prato
+                    AsyncImage(
+                        model = dish.pathToImage,
+                        contentDescription = dish.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Exibe os detalhes do prato
+                    Text("Nome: ${dish.name}", style = MaterialTheme.typography.titleMedium)
+                    Text("Refeição: ${dish.meal}", style = MaterialTheme.typography.bodyMedium)
+                    Text("Descrição: ${dish.description}", style = MaterialTheme.typography.bodySmall)
+                }
+            },
+            confirmButton = { // Botão para fechar o modal
+                Button(onClick = { setSelectedDish(null) }) {
+                    Text("Fechar")
+                }
+            }
+        )
+    }
 }
+
 
 
 @Composable
@@ -224,3 +270,4 @@ fun SelectComponent(
         }
     }
 }
+

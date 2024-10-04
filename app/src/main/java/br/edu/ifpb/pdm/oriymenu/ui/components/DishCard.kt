@@ -39,57 +39,82 @@ fun DishCard(
     // Estado para controlar o prato atualmente selecionado para exibição no AlertDialog
     val (selectedDish, setSelectedDish) = remember { mutableStateOf<Dish?>(null) }
 
-    LazyColumn {
-        items(dishes) { dish ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    AsyncImage(
-                        model = dish.pathToImage,
-                        contentDescription = dish.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(150.dp),
-                        contentScale = ContentScale.Crop
+    if (dishes.isEmpty()) {
+        // Exibe a mensagem de "Sem pratos disponíveis" quando a lista estiver vazia
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info, // Ícone de informação
+                contentDescription = "Sem pratos disponíveis",
+                tint = MaterialTheme.colorScheme.primary, // Cor do ícone
+                modifier = Modifier.size(64.dp) // Tamanho do ícone
+            )
+            Spacer(modifier = Modifier.height(16.dp)) // Espaço entre ícone e texto
+            Text(
+                text = "Não há pratos disponíveis para este dia.",
+                style = MaterialTheme.typography.bodyLarge, // Estilo do texto
+                color = MaterialTheme.colorScheme.onSurface // Cor do texto
+            )
+        }
+    } else {
+        // Exibe a lista de pratos quando houver itens disponíveis
+        LazyColumn {
+            items(dishes) { dish ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = dish.name, style = MaterialTheme.typography.titleMedium)
-                    Text(text = dish.meal, style = MaterialTheme.typography.bodyMedium)
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    // Row para alinhar o botão "Dar Feedback" e o ícone "Ver Detalhes"
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        // Botão "Dar Feedback"
-                        Button(onClick = { onFeedbackClick(dish) }) {
-                            Text("Dar Feedback")
-                        }
+                        AsyncImage(
+                            model = dish.pathToImage,
+                            contentDescription = dish.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(150.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = dish.name, style = MaterialTheme.typography.titleMedium)
+                        Text(text = dish.meal, style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                        // Botão redondo com ícone de informação
-                        IconButton(
-                            onClick = { setSelectedDish(dish) }, // Abre o modal com os detalhes do prato
-                            modifier = Modifier.padding(4.dp)
+                        // Row para alinhar o botão "Dar Feedback" e o ícone "Ver Detalhes"
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Info, // Ícone de "info"
-                                contentDescription = "Ver Detalhes",
-                                modifier = Modifier.size(24.dp) // Tamanho do ícone
-                            )
+                            // Botão "Dar Feedback"
+                            Button(onClick = { onFeedbackClick(dish) }) {
+                                Text("Dar Feedback")
+                            }
+
+                            // Botão redondo com ícone de informação
+                            IconButton(
+                                onClick = { setSelectedDish(dish) }, // Abre o modal com os detalhes do prato
+                                modifier = Modifier.padding(4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Info, // Ícone de "info"
+                                    contentDescription = "Ver Detalhes",
+                                    modifier = Modifier.size(24.dp) // Tamanho do ícone
+                                )
+                            }
                         }
                     }
                 }

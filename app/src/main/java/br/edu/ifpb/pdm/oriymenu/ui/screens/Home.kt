@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -47,6 +48,11 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+
 
 @Composable
 fun HomeScreen(
@@ -157,19 +163,30 @@ fun DishCard(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = dish.name, style = MaterialTheme.typography.titleMedium)
                     Text(text = dish.meal, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    // Row para alinhar o botão "Dar Feedback" e o ícone "Ver Detalhes"
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Botão "Dar Feedback"
+                        Button(onClick = { onFeedbackClick(dish) }) {
+                            Text("Dar Feedback")
+                        }
 
-                    // Botão "Ver Detalhes" que abre o modal (AlertDialog)
-                    Button(onClick = { setSelectedDish(dish) }) {
-                        Text("Ver Detalhes")
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Botão "Dar Feedback" que navega para a tela de feedback
-                    Button(onClick = { onFeedbackClick(dish) }) {
-                        Text("Dar Feedback")
+                        // Botão redondo com ícone de informação
+                        IconButton(
+                            onClick = { setSelectedDish(dish) }, // Abre o modal com os detalhes do prato
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info, // Ícone de "info"
+                                contentDescription = "Ver Detalhes",
+                                modifier = Modifier.size(24.dp) // Tamanho do ícone
+                            )
+                        }
                     }
                 }
             }

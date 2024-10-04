@@ -157,12 +157,7 @@ fun DishCard(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = dish.name, style = MaterialTheme.typography.titleMedium)
                     Text(text = dish.meal, style = MaterialTheme.typography.bodyMedium)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = dish.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontSize = 14.sp
-                    )
+
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Botão "Ver Detalhes" que abre o modal (AlertDialog)

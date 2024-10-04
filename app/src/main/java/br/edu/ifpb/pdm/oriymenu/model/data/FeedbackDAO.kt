@@ -2,6 +2,7 @@ package br.edu.ifpb.pdm.oriymenu.model.data
 
 import android.net.Uri
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
@@ -15,11 +16,11 @@ class FeedbackDAO {
      * @param feedback the feedback to be saved
      * @param callback function that will receive the saved feedback
      */
-    fun save(feedback: Feedback, callback: (Feedback?) -> Unit) {
+    fun save(feedback: Feedback, callback: (DocumentReference?) -> Unit) {
         db.collection("feedback").add(feedback)
             .addOnSuccessListener { documentReference ->
                 if (documentReference != null) {
-                    callback(feedback)
+                    callback(documentReference)
                 } else {
                     callback(null)
                 }

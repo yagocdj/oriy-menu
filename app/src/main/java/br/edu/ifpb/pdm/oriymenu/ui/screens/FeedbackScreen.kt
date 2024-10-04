@@ -126,10 +126,10 @@ fun FeedbackScreen(
                                     description = feedbackText,
                                     pathToImage = imageUrl
                                 )
-                                FeedbackDAO().save(newFeedback) { feedback ->
-                                    if (feedback != null) {
-                                        dish.feedback += feedback.id
-                                        DishDAO().save(dish) { success ->
+                                FeedbackDAO().save(newFeedback) { docRef ->
+                                    if (docRef != null) {
+                                        dish.feedback += docRef.id
+                                        DishDAO().update(dish) { success ->
                                             if (success) {
                                                 onFeedbackSubmitted(feedbackText, imageUri)
                                             } else {

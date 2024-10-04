@@ -17,7 +17,7 @@ class DishDAO {
      * boolean indicating if the dish was saved
      */
     fun save(dish: Dish, callback: (Boolean) -> Unit) {
-        db.collection("dish").add(dish)
+        db.collection(dbEntityName).add(dish)
             .addOnSuccessListener {
                 callback(true)
             }

@@ -19,6 +19,21 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        // Required when setting minSdkVersion to 20 or lower
+        multiDexEnabled = true
+
+        compileOptions {
+            // Flag to enable support for the new language APIs
+
+            // For AGP 4.1+
+            isCoreLibraryDesugaringEnabled = true
+            // For AGP 4.0
+            // coreLibraryDesugaringEnabled = true
+
+            // Sets Java compatibility to Java 8
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
     }
 
     buildTypes {
@@ -51,7 +66,13 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.firebase.storage.ktx)
+    // For AGP 7.4+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    // For AGP 7.3
+    // coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.3")
+    // For AGP 4.0 to 7.2
+    // coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.9")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -72,4 +93,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 }

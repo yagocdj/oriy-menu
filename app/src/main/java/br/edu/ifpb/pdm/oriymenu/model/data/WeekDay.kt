@@ -2,9 +2,9 @@ package br.edu.ifpb.pdm.oriymenu.model.data
 
 import com.google.firebase.firestore.DocumentId
 
-class Feedback(
+data class WeekDay(
     @DocumentId
     val id: String = "",
-    val description: String = "",
-    val pathToImage: String = "",
-    val dish: String = "")
+    val name: String = "",
+    var dishes: List<String> = emptyList()
+)
